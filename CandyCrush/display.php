@@ -1,8 +1,24 @@
 <?php
 require 'dbcon.php';
 
+// Handle search functionality
+$searchTerm = '';
+if (isset($_GET['search'])) {
+    $searchTerm = $_GET['search'];
+    $stmt = $pdo->prepare("SELECT * FROM candies WHERE CandyName LIKE ?");
+    $stmt->execute(['%' . $searchTerm . '%']);
+} else {
+    $stmt = $pdo->query("SELECT * FROM candies");
+}
+// Handle delete functionality
+if (isset($_GET['delete'])) {
+    $candyId = $_GET['delete'];
+    $stmt = $pdo->prepare("DELETE FROM candies WHERE CandyID = ?");
+    $stmt->execute([$candyId]);
+    header('Location: display.php');
+    exit();
+}
 // Fetch all candies from the database
-$stmt = $pdo->query("SELECT * FROM candies");
 $candies = $stmt->fetchAll();
 ?>
 
@@ -21,6 +37,14 @@ $candies = $stmt->fetchAll();
 <?php include 'navbar.php'; ?> <!-- Include the navbar -->
 <div class="container candy-container mt-5">
     <h2 class="text-center candy-title mb-4">Candy List</h2>
+
+    <!-- Search Form -->
+    <form class="mb-4" method="GET" action="display.php">
+        <div class="input-group">
+            <input type="text" name="search" class="form-control" placeholder="Search by Candy Name" value="<?php echo htmlspecialchars($searchTerm); ?>">
+            <button class="btn btn-outline-secondary" type="submit">Search</button>
+        </div>
+    </form>
     
     <table class="table table-striped">
         <thead>
@@ -43,7 +67,7 @@ $candies = $stmt->fetchAll();
                         <a href="form.php?edit=<?php echo $candy['CandyID']; ?>" class="btn btn-warning btn-sm">
                             <i class="fas fa-pencil-alt"></i> Edit
                         </a>
-                        <a href="" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure?')">
+                        <a href="display.php?delete=<?php echo $candy['CandyID']; ?>" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure?')">
                             <i class="fas fa-trash-alt"></i> Delete
                         </a>
                     </td>
