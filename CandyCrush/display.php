@@ -40,7 +40,7 @@ $candies = $stmt->fetchAll();
                     <td><?php echo htmlspecialchars($candy['StockAvailable']); ?></td>
                     <td><?php echo htmlspecialchars($candy['PricePerUnit']); ?></td>
                     <td class="text-center">
-                        <a href="" class="btn btn-warning btn-sm">
+                        <a href="form.php?edit=<?php echo $candy['CandyID']; ?>" class="btn btn-warning btn-sm">
                             <i class="fas fa-pencil-alt"></i> Edit
                         </a>
                         <a href="" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure?')">
